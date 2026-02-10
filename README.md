@@ -7,7 +7,7 @@ wide tile card
 <img width="203" height="98" alt="Снимок экрана 2026-02-10 в 11 29 16" src="https://github.com/user-attachments/assets/38b590ae-7943-426e-95f7-74416f1629c2" />
 
 Features:
-- srollable chips
+- scrollable chips
 - dinamic "ring outline" for icon (media-duration)
 
 Used:
