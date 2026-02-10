@@ -8,7 +8,7 @@ wide tile card
 
 Features:
 - srollable chips
-- dinamic "ring otline" for icon (media-duration)
+- dinamic "ring outline" for icon (media-duration)
 
 Used:
  1. [Mushrooms](https://github.com/piitaya/lovelace-mushroom)
