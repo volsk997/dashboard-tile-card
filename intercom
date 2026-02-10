@@ -1,0 +1,182 @@
+type: custom:vertical-stack-in-card
+cards:
+  - type: custom:mushroom-template-card
+    primary: Домофон
+    secondary: ""
+    icon: |-
+      {% if is_state(config.entity, 'on') %} mdi:check
+      {% else %}mdi:lock-smart
+      {% endif %}
+    fill_container: true
+    badge_icon: ""
+    icon_color: |-
+      {% set color = 'green' %}
+      {% if is_state(config.entity, 'on') %} {{color}}
+      {% else %} 
+      {% endif %}
+    badge_color: ""
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    entity: binary_sensor.domofon_vkhodiashchii_zvonok
+    double_tap_action:
+      action: none
+    layout: horizontal
+    card_mod:
+      style:
+        .: |
+          {% include 'mushroom_ha_card_transparent.jinja' %} 
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: binary_sensor.domofon_vkhodiashchii_zvonok
+            state: "on"
+        chip:
+          type: template
+          tap_action:
+            action: toggle
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          icon: mdi:check
+          icon_color: green
+          entity: button.domofon_propustit
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: binary_sensor.domofon_vkhodiashchii_zvonok
+            state: "on"
+        chip:
+          type: template
+          tap_action:
+            action: toggle
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          icon: mdi:close
+          icon_color: red
+          entity: button.domofon_otkazat
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.domofon_otkryvat_na_sleduiushchii_zvonok
+            state: "on"
+        chip:
+          type: template
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          icon: "{{states[config.entity].attributes.icon}}"
+          entity: switch.domofon_otkryvat_na_sleduiushchii_zvonok
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.domofon_otkliuchit_trubku_domofona
+            state: "on"
+        chip:
+          type: template
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          icon: mdi:volume-off
+          entity: switch.domofon_otkliuchit_trubku_domofona
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.domofon_vsegda_sbrasyvat
+            state: "on"
+        chip:
+          type: template
+          content: ""
+          icon: "{{states[config.entity].attributes.icon}}"
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          entity: switch.domofon_vsegda_sbrasyvat
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.domofon_otkryvat_vsegda
+            state: "on"
+        chip:
+          type: template
+          content: ""
+          icon: "{{states[config.entity].attributes.icon}}"
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          entity: switch.domofon_otkryvat_vsegda
+      - type: template
+        tap_action:
+          action: navigate
+          navigation_path: /dashboard-iphone/domofon
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: binary_sensor.domofon_vkhodiashchii_zvonok
+        content: "{% include 'last_changed_calc.jinja' %}"
+    alignment: start
+    card_mod:
+      style: |
+        {% set top = 8 %} 
+        {% set font_weight = 400 %}
+        {% set font_size = 14 %}
+        {% set chip_height = 45 %}
+        {% include 'chip_secondary_shape.jinja' %}
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: template
+        icon: >-
+          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
+          mdi:alert-circle
+
+          {% else %} mdi:chevron-right
+
+          {% endif %}
+        icon_color: >-
+          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
+          red
+
+          {% else %} 
+
+          {% endif %}
+        tap_action:
+          action: navigate
+          navigation_path: /dashboard-iphone/domofon
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: sensor.domofon_sostoianie_linii
+    alignment: end
+    card_mod:
+      style: |
+        {% include 'thirdary_chip_ha_card.jinja' %}
+grid_options:
+  columns: 6
+  rows: auto
+card_mod:
+  style: |
+    {% set entity = 'binary_sensor.domofon_vkhodiashchii_zvonok' %}
+    {% set state_on = 'on' %}
+    {% set hover = true %}
+
+    {% include 'stack_card.jinja'%}
