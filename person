@@ -1,0 +1,141 @@
+type: custom:vertical-stack-in-card
+cards:
+  - type: custom:mushroom-template-card
+    secondary: |2-
+            {% set x = states(config.entity) %}  {% set y =
+            state_attr('sensor.iphone_15_pro_max_geocoded_location', 'Locality' )  %}  {% set
+            z = state_attr('sensor.iphone_15_pro_max_geocoded_location',
+            'Name')|replace("улица ","")|replace("проспект ","")|replace("бульвар
+            ","") %}  {% if is_state(config.entity, 'home') %} Дома  {% elif
+            is_state(config.entity, 'В Ситилинке') %} На работе  {% elif
+            is_state(config.entity, 'Дом Мелкой') %} У Мелкой  {% elif
+            is_state(config.entity, 'not_home') %}   
+
+            {% if is_state_attr('sensor.iphone_15_pro_max_geocoded_location', 'Locality',
+            'Волжский' ) %} {{z|string|replace
+            ("'","")|replace ("(","")|replace(")","")}}   {% else %}
+            {{y|string|replace ("'","")|replace
+            ("(","")|replace(")","")}}   {% endif %} {% else %}
+            {{states(config.entity)}}  {% endif %}
+    icon: >-
+      {% if state_attr(config.entity, 'icon') != None %}
+      {{state_attr(config.entity, 'icon')}} {% else %} mdi:account {% endif %}
+    entity: person.name
+    badge_icon: ""
+    badge_color: ""
+    hold_action:
+      action: none
+    tap_action:
+      action: more-info
+    fill_container: true
+    double_tap_action:
+      action: none
+    layout: horizontal
+    picture: ""
+    primary: Name
+    card_mod:
+      style:
+        mushroom-shape-icon$: >-
+          {% set shape_variable = 'shape-color' %} {% include
+          'mushroom_icon_shape.jinja' %}   {% set z = 100 %} {% set color %}
+            {% set entity = config.entity %}{% include 'person_colors.jinja' %}
+          {% endset %} {% set color = color | trim %} {% include
+          'mushroom_icon_shape_after.jinja' %}
+        mushroom-state-info$: |
+          .container {
+           --card-secondary-color: {{states('input_text.tsvet_shrifta_vtorostepennaia_informatsiia')}};
+        .: |
+          {% include 'mushroom_ha_card_transparent.jinja' %} 
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: conditional
+        conditions:
+          - condition: or
+            conditions:
+              - condition: state
+                entity: binary_sensor.iphone_15_pro_max_focus
+                state: "on"
+              - condition: state
+                entity: sensor.iphone_15_pro_max_audio_output
+                state: CarPlay
+        chip:
+          type: template
+          tap_action:
+            action: more-info
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          icon: >-
+            {% if is_state('sensor.iphone_15_pro_max_audio_output','CarPlay')%}
+            mdi:car
+
+            {% elif is_state('binary_sensor.iphone_15_pro_max_focus','on')%}
+            fas:moon
+
+            {% else %}
+
+            {% endif %}
+          icon_color: "1"
+          entity: binary_sensor.iphone_15_pro_max_focus
+      - type: template
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: sensor.iphone_15_pro_max_battery_level
+        icon: "{{states[config.entity].attributes.icon}}"
+        content: "{{states[config.entity].state}}%"
+      - type: template
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: sensor.iphone_15_pro_max_connection_type
+        icon: "{{states[config.entity].attributes.icon}}"
+        content: |
+          {% set x = config.entity %}
+          {% set y = x|replace("connection_type","ssid") %}
+
+          {% if states[config.entity].state == 'Cellular' %} Yota
+          {% elif states[config.entity].state == 'Wi-Fi' %} {{states[y].state}}
+          {% else %} {{states[config.entity].state}}
+          {% endif %}
+    alignment: start
+    card_mod:
+      style: |
+        {% set top = 8 %} 
+        {% set font_weight = 400 %}
+        {% set font_size = 14 %}
+        {% set chip_height = 45 %}
+        {% include 'chip_secondary_shape.jinja' %}
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: template
+        icon: ""
+        entity: person.name
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        picture: "{{state_attr(config.entity, 'entity_picture')}}"
+    alignment: end
+    card_mod:
+      style: |
+        {% include 'fixed_entity_picture.jinja' %}
+grid_options:
+  columns: 6
+  rows: auto
+card_mod:
+  style: |
+    {% set entity = 'person.name' %}
+    {% set state_on = 'home' %}
+    {% set hover = true %}
+
+    {% include 'stack_card.jinja'%}
