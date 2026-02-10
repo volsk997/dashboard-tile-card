@@ -1,0 +1,128 @@
+type: custom:vertical-stack-in-card
+cards:
+  - type: custom:mushroom-template-card
+    primary: Mac Mini
+    secondary: ""
+    icon: mdi:monitor
+    badge_icon: ""
+    tap_action:
+      action: none
+    icon_color: |-
+      {% if is_state(config.entity, 'on' )%} black
+      {% else %} disabled
+      {% endif %}
+    double_tap_action:
+      action: none
+    badge_color: ""
+    fill_container: true
+    picture: ""
+    hold_action:
+      action: none
+    layout: horizontal
+    entity: binary_sensor.mac_mini_active
+    card_mod:
+      style:
+        .: |
+          {% include 'mushroom_ha_card_transparent.jinja' %} 
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: template
+        entity: binary_sensor.mac_mini_display
+        icon: |-
+          {% if is_state(config.entity, 'on')%} mdi:monitor
+          {% else %} mdi:monitor-off
+          {% endif %}
+        tap_action:
+          action: more-info
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: binary_sensor.mac_mini_display
+            state: "on"
+        chip:
+          type: template
+          tap_action:
+            action: more-info
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          entity: sensor.mac_mini_frontmost_app
+          icon: |2-
+             {% if is_state(config.entity, 'loginwindow') %} mdi:lock
+             {% else %} 
+               {{states[config.entity].attributes.icon}}
+             {% endif %}
+          content: |2-
+             {% if is_state(config.entity, 'loginwindow') %} Заблокирован
+             {% else %} 
+
+               {{states('sensor.mac_mini_frontmost_app')}}
+
+             {% endif %}
+      - type: template
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: sensor.mac_mini_connection_type
+        icon: "{{states[config.entity].attributes.icon}}"
+        content: |+
+          {% set x = config.entity %}
+          {% set y = x|replace("connection_type","ssid") %}
+
+          {% if states[config.entity].state == 'Cellular' %} Yota
+          {% elif states[config.entity].state == 'Wi-Fi' %} {{states[y].state}}
+          {% else %} {{states[config.entity].state}}
+          {% endif %}
+
+    alignment: start
+    card_mod:
+      style: |
+        {% set top = 8 %} 
+        {% set font_weight = 400 %}
+        {% set font_size = 14 %}
+        {% set chip_height = 45 %}
+        {% include 'chip_secondary_shape.jinja' %}
+  - type: custom:mushroom-chips-card
+    chips:
+      - type: template
+        icon: >-
+          {% if is_state('sensor.mac_mini_frontmost_app','loginwindow') %}
+          mdi:lock
+
+          {% elif is_state_attr(config.entity, 'Locked', true) %} mdi:lock
+
+          {% elif is_state_attr(config.entity, 'Sleeping', true) %} fas:moon
+
+          {% else %} 
+
+          {% endif %}
+        entity: binary_sensor.mac_mini_active
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        icon_color: disabled
+    alignment: end
+    card_mod:
+      style: |
+        {% include 'thirdary_chip_ha_card.jinja' %}
+grid_options:
+  columns: 6
+  rows: auto
+card_mod:
+  style: |
+    {% set entity = 'binary_sensor.mac_mini_active' %}
+    {% set state_on = 'on' %}
+    {% set hover = true %}
+
+    {% include 'stack_card.jinja'%}
