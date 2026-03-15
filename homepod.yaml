@@ -9,7 +9,14 @@ cards:
         {% else%}{{ title }}{% endif %}
       {% else %} Homepod Mini
       {% endif %}
-    secondary:  
+    secondary: |-
+      {% set title = state_attr(config.entity,'media_artist') %}
+
+      {% if is_state(config.entity, 'playing') %} 
+        {% if state_attr(config.entity,'media_artist') is none or  state_attr(config.entity,'media_artist') == ''%} Недоступно
+        {% else%}{{ title }}{% endif %}
+      {% else %} Не исполняется
+      {% endif %}
     entity: media_player.homepod_mini_gost
     picture: "{{state_attr(config.entity, 'entity_picture')}}"
     badge_icon: ""
@@ -100,34 +107,6 @@ cards:
         {% set font_size = 14 %}
         {% set chip_height = 45 %}
         {% include 'chip_secondary_shape.jinja' %}
-  - type: custom:mushroom-chips-card
-    chips:
-      - type: template
-        tap_action:
-          action: none
-        hold_action:
-          action: none
-        double_tap_action:
-          action: none
-        entity: media_player.homepod_mini_gost
-        icon: ""
-        content: |-
-          {% set title = state_attr(config.entity,'media_artist') %}
-
-          {% if is_state(config.entity, 'playing') %} 
-            {% if state_attr(config.entity,'media_artist') is none or  state_attr(config.entity,'media_artist') == ''%} Недоступно
-            {% else%}{{ title }}{% endif %}
-          {% else %} Не исполняется
-          {% endif %}
-        icon_color: ""
-    alignment: start
-    card_mod:
-      style: |
-        {% include 'scroll_secondary_ha_card_chip_container.jinja' %}
-            position: absolute;
-            top: 54px;
-            left: 46px;
-           }
   - type: custom:mushroom-chips-card
     chips:
       - type: template
