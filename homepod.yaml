@@ -1,21 +1,26 @@
 type: custom:vertical-stack-in-card
 cards:
   - type: custom:mushroom-template-card
-    primary: |-
-      {% set title = state_attr(config.entity,'media_title') %}
-
-      {% if is_state(config.entity, 'playing') %} 
-        {% if state_attr(config.entity,'media_title') is none or  state_attr(config.entity,'media_title') == ''%} Недоступно
-        {% else%}{{ title }}{% endif %}
-      {% else %} Homepod Mini
+    primary: >-
+      {% if is_state(config.entity, 'playing') and
+      state_attr(config.entity,'media_title') is not none and
+      state_attr(config.entity,'media_title') != '' %}
+        {% if state_attr(config.entity,'media_title') == 'Streaming with pyatv' %}
+          Стриминг
+        {% else %}
+          {{ state_attr(config.entity, 'media_title')|truncate(80) }}
+        {% endif %}
+      {% else %}
+         Homepod Mini
       {% endif %}
-    secondary: |-
-      {% set title = state_attr(config.entity,'media_artist') %}
+    secondary: >-
+      {% if is_state(config.entity, 'playing') %}
+        {{ state_attr(config.entity, 'media_artist') | default('Неизвестно', true) }}
+      {% elif states(config.entity) in ['unknown', 'unavailable', 'none']  %}
+      Неизвестно
 
-      {% if is_state(config.entity, 'playing') %} 
-        {% if state_attr(config.entity,'media_artist') is none or  state_attr(config.entity,'media_artist') == ''%} Недоступно
-        {% else%}{{ title }}{% endif %}
-      {% else %} Не исполняется
+      {% else %}
+        Не исполняется
       {% endif %}
     entity: media_player.homepod_mini_gost
     picture: "{{state_attr(config.entity, 'entity_picture')}}"
@@ -44,6 +49,28 @@ cards:
           {% include 'mushroom_ha_card_transparent.jinja' %}
   - type: custom:mushroom-chips-card
     chips:
+      - type: template
+        icon_color: 120,120,120,0.5
+        icon: >-
+          {% if state_attr(config.entity, 'volume_level')|float(0) > 0.5 %}
+          mdi:volume-high
+
+          {% elif state_attr(config.entity, 'volume_level')|float(0) > 0.3 %}
+          mdi:volume-medium
+
+          {% elif state_attr(config.entity, 'volume_level')|float(0) > 0.01 %}
+          mdi:volume-low
+
+          {% else %} mdi:help-circle
+
+          {% endif %}
+        tap_action:
+          action: none
+        hold_action:
+          action: none
+        double_tap_action:
+          action: none
+        entity: media_player.homepod_mini_gost
       - type: template
         icon_color: ""
         icon: fas:backward-step
@@ -75,13 +102,9 @@ cards:
           {% endif %}
         tap_action:
           action: perform-action
-          perform_action: script.turn_on
+          perform_action: media_player.media_play_pause
           target:
-            entity_id: script.homepod_play_pause_extended
-          data:
-            variables:
-              entity: media_player.homepod_mini_gost
-              user: stanislav
+            entity_id: media_player.homepod_mini_gost
         hold_action:
           action: none
         double_tap_action:
