@@ -84,9 +84,6 @@ cards:
           - condition: state
             entity: media_player.samsungtv
             state_not: "off"
-          - condition: state
-            entity: binary_sensor.appletv_media_progress
-            state: "on"
         chip:
           type: template
           tap_action:
@@ -101,13 +98,13 @@ cards:
           - condition: state
             entity: media_player.samsungtv
             state_not: "off"
-          - condition: state
-            entity: binary_sensor.appletv_media_progress
-            state: "on"
         chip:
           type: template
           icon: ion:play-back
-          icon_color: "1"
+          icon_color: |-
+            {% if is_state('binary_sensor.appletv_media_progress','on')%} 1
+            {% else %} 120,120,120, 0.4
+            {% endif %}
           tap_action:
             action: call-service
             service: media_player.media_previous_track
@@ -122,9 +119,6 @@ cards:
           - condition: state
             entity: media_player.samsungtv
             state_not: "off"
-          - condition: state
-            entity: binary_sensor.appletv_media_progress
-            state: "on"
         chip:
           type: template
           entity: media_player.gostinaia
@@ -141,19 +135,22 @@ cards:
             {% if is_state('media_player.gostinaia', 'playing') %}fas:pause {%
             elif is_state('media_player.gostinaia', 'paused') %}fas:play {% else
             %}fas:exclamation-circle {% endif %}
-          icon_color: "1"
+          icon_color: |-
+            {% if is_state('binary_sensor.appletv_media_progress','on')%} 1
+            {% else %} 120,120,120, 0.4
+            {% endif %}
       - type: conditional
         conditions:
           - condition: state
             entity: media_player.samsungtv
             state_not: "off"
-          - condition: state
-            entity: binary_sensor.appletv_media_progress
-            state: "on"
         chip:
           type: template
           icon: ion:play-forward
-          icon_color: "1"
+          icon_color: |-
+            {% if is_state('binary_sensor.appletv_media_progress','on')%} 1
+            {% else %} 120,120,120, 0.4
+            {% endif %}
           tap_action:
             action: call-service
             service: media_player.media_next_track
