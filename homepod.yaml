@@ -1,6 +1,29 @@
 type: custom:vertical-stack-in-card
 cards:
   - type: custom:mushroom-template-card
+    secondary: >-
+      {% if is_state(config.entity, 'playing') %}
+        {{ state_attr(config.entity, 'media_artist') | default('Неизвестно', true) }}
+      {% elif states(config.entity) in ['unknown', 'unavailable', 'none']  %}
+      Неизвестно
+
+      {% else %}
+        Не исполняется
+      {% endif %}
+    icon: phu:homepod-mini
+    features_position: bottom
+    icon_tap_action:
+      action: perform-action
+      perform_action: media_player.media_play_pause
+      target:
+        entity_id: media_player.homepod_mini_gost
+    tap_action:
+      action: navigate
+      navigation_path: /dashboard-iphone/homepod_mini_gost
+    color: |
+      {% if is_state(config.entity, 'playing') %} 120,120,120
+        {% else%} grey
+        {% endif %}
     primary: >-
       {% if is_state(config.entity, 'playing') and
       state_attr(config.entity,'media_title') is not none and
@@ -11,69 +34,20 @@ cards:
           {{ state_attr(config.entity, 'media_title')|truncate(80) }}
         {% endif %}
       {% else %}
-         Homepod Mini
+        Гостиная
       {% endif %}
-    secondary: >-
-      {% if is_state(config.entity, 'playing') %}
-        {{ state_attr(config.entity, 'media_artist') | default('Неизвестно', true) }}
-      {% elif states(config.entity) in ['unknown', 'unavailable', 'none']  %}
-      Неизвестно
-
-      {% else %}
-        Не исполняется
-      {% endif %}
+       ›
     entity: media_player.homepod_mini_gost
     picture: "{{state_attr(config.entity, 'entity_picture')}}"
-    badge_icon: ""
-    badge_color: ""
-    icon_color: |
-      {% if is_state(config.entity, 'playing') %} 120,120,120
-        {% else%} disabled
-        {% endif %}
-    tap_action:
-      action: none
-    double_tap_action:
-      action: none
-    fill_container: true
-    layout: horizontal
-    hold_action:
-      action: none
-    icon: phu:homepod-mini
     card_mod:
       style:
-        mushroom-state-info$: |
-          .container {
-           --card-secondary-color: {{states('input_text.tsvet_shrifta_vtorostepennaia_informatsiia')}};
-           padding-right: 25px;
         .: |
-          {% include 'mushroom_ha_card_transparent.jinja' %}
+          {% include 'mushroom_ha_card_top_space.jinja' %}
   - type: custom:mushroom-chips-card
     chips:
       - type: template
-        icon_color: 120,120,120,0.5
-        icon: >-
-          {% if state_attr(config.entity, 'volume_level')|float(0) > 0.5 %}
-          mdi:volume-high
-
-          {% elif state_attr(config.entity, 'volume_level')|float(0) > 0.3 %}
-          mdi:volume-medium
-
-          {% elif state_attr(config.entity, 'volume_level')|float(0) > 0.01 %}
-          mdi:volume-low
-
-          {% else %} mdi:help-circle
-
-          {% endif %}
-        tap_action:
-          action: none
-        hold_action:
-          action: none
-        double_tap_action:
-          action: none
-        entity: media_player.homepod_mini_gost
-      - type: template
         icon_color: ""
-        icon: fas:backward-step
+        icon: ion:play-back
         tap_action:
           action: perform-action
           perform_action: media_player.media_previous_track
@@ -112,7 +86,7 @@ cards:
         entity: media_player.homepod_mini_gost
       - type: template
         icon_color: ""
-        icon: fas:forward-step
+        icon: ion:play-forward
         tap_action:
           action: perform-action
           perform_action: media_player.media_next_track
@@ -130,38 +104,9 @@ cards:
         {% set font_size = 14 %}
         {% set chip_height = 45 %}
         {% include 'chip_secondary_shape.jinja' %}
-  - type: custom:mushroom-chips-card
-    chips:
-      - type: template
-        icon: >-
-          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
-          mdi:alert-circle
-
-          {% else %} mdi:chevron-right
-
-          {% endif %}
-        icon_color: >-
-          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
-          red
-
-          {% else %} 
-
-          {% endif %}
-        tap_action:
-          action: navigate
-          navigation_path: /dashboard-iphone/homepod_mini_gost
-        hold_action:
-          action: none
-        double_tap_action:
-          action: none
-        entity: media_player.homepod_mini_gost
-    alignment: end
-    card_mod:
-      style: |
-        {% include 'thirdary_chip_ha_card.jinja' %}
 grid_options:
   columns: 6
-  rows: auto
+  rows: 2
 card_mod:
   style: |
     {% set entity = 'media_player.homepod_mini_gost' %}
