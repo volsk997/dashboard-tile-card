@@ -1,32 +1,27 @@
 type: custom:vertical-stack-in-card
 cards:
   - type: custom:mushroom-template-card
-    primary: Домофон
-    secondary: ""
     icon: |-
       {% if is_state(config.entity, 'on') %} mdi:check
       {% else %}mdi:lock-smart
       {% endif %}
-    fill_container: true
-    badge_icon: ""
-    icon_color: |-
+    features_position: bottom
+    icon_tap_action:
+      action: none
+    tap_action:
+      action: navigate
+      navigation_path: /dashboard-iphone/domofon
+    color: |-
       {% set color = 'green' %}
       {% if is_state(config.entity, 'on') %} {{color}}
-      {% else %} 
+      {% else %} grey
       {% endif %}
-    badge_color: ""
-    tap_action:
-      action: none
-    hold_action:
-      action: none
+    primary: Домофон ›
     entity: binary_sensor.domofon_vkhodiashchii_zvonok
-    double_tap_action:
-      action: none
-    layout: horizontal
     card_mod:
       style:
         .: |
-          {% include 'mushroom_ha_card_transparent.jinja' %} 
+          {% include 'mushroom_ha_card_top_space.jinja' %}
   - type: custom:mushroom-chips-card
     chips:
       - type: conditional
@@ -141,38 +136,9 @@ cards:
         {% set font_size = 14 %}
         {% set chip_height = 45 %}
         {% include 'chip_secondary_shape.jinja' %}
-  - type: custom:mushroom-chips-card
-    chips:
-      - type: template
-        icon: >-
-          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
-          mdi:alert-circle
-
-          {% else %} mdi:chevron-right
-
-          {% endif %}
-        icon_color: >-
-          {% if states(config.entity) in ['unknown', 'unavailable', 'none']  %}
-          red
-
-          {% else %} 
-
-          {% endif %}
-        tap_action:
-          action: navigate
-          navigation_path: /dashboard-iphone/domofon
-        hold_action:
-          action: none
-        double_tap_action:
-          action: none
-        entity: sensor.domofon_sostoianie_linii
-    alignment: end
-    card_mod:
-      style: |
-        {% include 'thirdary_chip_ha_card.jinja' %}
 grid_options:
   columns: 6
-  rows: auto
+  rows: 2
 card_mod:
   style: |
     {% set entity = 'binary_sensor.domofon_vkhodiashchii_zvonok' %}
